@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roblox Regional Price Checker v2</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        .container { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); max-width: 500px; width: 100%; }
+        h1 { color: #333; text-align: center; margin-bottom: 10px; font-size: 28px; }
+        .subtitle { text-align: center; color: #666; margin-bottom: 30px; font-size: 14px; }
+        .input-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; color: #555; font-weight: 600; }
+        input { width: 100%; padding: 12px 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; transition: border-color 0.3s; }
+        input:focus { outline: none; border-color: #667eea; }
+        button { width: 100%; padding: 14px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
+        button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4); }
+        button:active { transform: translateY(0); }
+        button:disabled { background: #ccc; cursor: not-allowed; transform: none; }
+        .result { margin-top: 25px; padding: 20px; border-radius: 10px; display: none; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        .result.active { background: #d4edda; border: 2px solid #28a745; color: #155724; }
+        .result.inactive { background: #f8d7da; border: 2px solid #dc3545; color: #721c24; }
+        .result.error { background: #fff3cd; border: 2px solid #ffc107; color: #856404; }
+        .result-icon { font-size: 48px; text-align: center; margin-bottom: 10px; }
+        .result-text { text-align: center; font-size: 18px; font-weight: 600; }
+        .loading { display: none; text-align: center; margin-top: 20px; }
+        .spinner { border: 3px solid #f3f3f3; border-top: 3px solid #667eea; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌍 Regional Price Checker</h1>
+        <p class="subtitle">Cek status regional pricing gamepass Roblox</p>
+
+        <div class="input-group">
+            <label for="gamepassId">Game Pass ID</label>
+            <input type="text" id="gamepassId" placeholder="Masukkan ID gamepass..." autocomplete="off">
+        </div>
+
+        <button onclick="checkRegionalPrice()">Cek Status</button>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p style="margin-top: 10px; color: #666;">Mengecek...</p>
+        </div>
+
+        <div class="result" id="result">
+            <div class="result-icon" id="resultIcon"></div>
+            <div class="result-text" id="resultText"></div>
+        </div>
+    </div>
+
+    <script>
+        const input = document.getElementById('gamepassId');
+        const resultDiv = document.getElementById('result');
+        const loadingDiv = document.getElementById('loading');
+        const resultIcon = document.getElementById('resultIcon');
+        const resultText = document.getElementById('resultText');
+
+        input.addEventListener('keypress', function(e) { if (e.key === 'Enter') { checkRegionalPrice(); } });
+
+        async function checkRegionalPrice() {
+            const gamepassId = input.value.trim();
+            if (!gamepassId) { showResult('error', '⚠️', 'Masukkan ID gamepass terlebih dahulu!'); return; }
+            if (!/^\d+$/.test(gamepassId)) { showResult('error', '⚠️', 'ID gamepass harus berupa angka!'); return; }
+
+            resultDiv.style.display = 'none';
+            loadingDiv.style.display = 'block';
+
+            try {
+                const response = await fetch(`/api/gamepass/${gamepassId}`);
+                if (!response.ok) throw new Error('Gagal mengambil data dari API');
+                const data = await response.json();
+                if (data.errors) throw new Error(data.errors[0].message || 'Terjadi kesalahan dari API Roblox');
+                if (!data) throw new Error('Gagal mengambil data dari API');
+
+                const featuresRaw = (data.priceInformation && data.priceInformation.enabledFeatures) ?? data.enabledFeatures ?? [];
+                const features = Array.isArray(featuresRaw) ? featuresRaw.map(v => typeof v === 'string' ? v.trim() : String(v).trim()) : [];
+                const hasRegionalPricing = features.some(v => v.toLowerCase() === 'regionalpricing');
+
+                if (hasRegionalPricing) { showResult('active', '✅', 'Regional Pricing AKTIF'); }
+                else { showResult('inactive', '❌', 'Regional Pricing TIDAK AKTIF'); }
+            } catch (error) {
+                showResult('error', '⚠️', error.message || 'Terjadi kesalahan saat mengecek');
+            } finally {
+                loadingDiv.style.display = 'none';
+            }
+        }
+
+        function showResult(type, icon, text) {
+            resultDiv.className = 'result ' + type;
+            resultIcon.textContent = icon;
+            resultText.textContent = text;
+            resultDiv.style.display = 'block';
+        }
+    </script>
+</body>
+</html>

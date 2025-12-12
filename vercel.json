@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "api/**/*.js", "use": "@vercel/node" }
+  ],
+  "routes": [
+    { "src": "/api/gamepass/(.*)", "dest": "/api/gamepass.js?id=$1" },
+    { "src": "/(.*)", "dest": "/public/$1" }
+  ],
+  "outputDirectory": "public"
+}

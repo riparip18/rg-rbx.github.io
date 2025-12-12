@@ -1,4 +1,26 @@
-# Roblox Regional Price Checker
+# Roblox Regional Price Checker (Vercel)
+
+- Frontend is served from `public/`.
+- API function is at `api/gamepass.js` and requires `ROBLOSECURITY` env var.
+
+## Deploy to Vercel
+
+1. Push this repo to GitHub.
+2. Import to Vercel, set:
+   - Project Settings → Build & Output → Output Directory: `public` (already set in `vercel.json`).
+   - Settings → Environment Variables: add `ROBLOSECURITY` with your cookie value.
+3. Redeploy.
+
+## Local quick test
+
+You can run the API function locally via Vercel CLI:
+
+```powershell
+npm i -g vercel
+vercel dev
+```
+
+Then open `http://localhost:3000` and test `/api/gamepass/<id>`.# Roblox Regional Price Checker
 
 Website sederhana untuk mengecek apakah regional pricing aktif pada gamepass Roblox.
 
