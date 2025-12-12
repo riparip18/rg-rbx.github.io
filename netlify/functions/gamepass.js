@@ -1,7 +1,14 @@
 const https = require('https');
 
 exports.handler = async (event) => {
-  const id = (event.queryStringParameters && event.queryStringParameters.id) || '';
+  // Accept id from query string or path segment
+  let id = (event.queryStringParameters && event.queryStringParameters.id) || '';
+  if (!id) {
+    // Try to parse from path like /api/gamepass/123456
+    const path = event.path || '';
+    const m = path.match(/\/api\/gamepass\/(\d+)/);
+    if (m && m[1]) id = m[1];
+  }
   if (!id || !/^\d+$/.test(id)) {
     return { statusCode: 400, body: JSON.stringify({ error: 'Invalid gamepass id' }) };
   }
