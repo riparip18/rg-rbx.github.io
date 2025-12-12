@@ -1,4 +1,29 @@
 [build]
+  publish = "public"
+  functions = "netlify/functions"
+
+[[redirects]]
+  from = "/api/gamepass/:id"
+  to = "/.netlify/functions/gamepass?id=:id"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/*"
+  to = "/api/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/"
+  to = "/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200[build]
   publish = "."
   command = "echo 'Static build'"
   functions = "netlify/functions"

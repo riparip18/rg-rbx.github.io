@@ -1,6 +1,43 @@
 const https = require('https');
 
 exports.handler = async (event) => {
+  try {
+    const id = (event.queryStringParameters && event.queryStringParameters.id)
+      || (event.path && (event.path.match(/\/api\/gamepass\/(\d+)/) || [])[1]);
+
+    if (!id || !/^\d+$/.test(String(id))) {
+      return { statusCode: 400, body: JSON.stringify({ error: 'Invalid gamepass id' }) };
+    }
+
+    const cookie = process.env.ROBLOSECURITY;
+    if (!cookie) {
+      return { statusCode: 500, body: JSON.stringify({ error: 'Server not configured: missing ROBLOSECURITY secret' }) };
+    }
+
+    const apiUrl = `https://apis.roblox.com/game-passes/v1/game-passes/${id}/details`;
+    const options = {
+      headers: {
+        'Cookie': `.ROBLOSECURITY=${cookie}`,
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        'Accept': 'application/json'
+      }
+    };
+
+    const responseBody = await new Promise((resolve, reject) => {
+      https.get(apiUrl, options, (apiRes) => {
+        let data = '';
+        apiRes.on('data', (chunk) => { data += chunk; });
+        apiRes.on('end', () => resolve({ statusCode: apiRes.statusCode || 200, body: data }));
+      }).on('error', reject);
+    });
+
+    return { statusCode: responseBody.statusCode, headers: { 'Content-Type': 'application/json' }, body: responseBody.body };
+  } catch (err) {
+    return { statusCode: 502, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ error: err.message }) };
+  }
+};const https = require('https');
+
+exports.handler = async (event) => {
   // Accept id from query string or path segment
   let id = (event.queryStringParameters && event.queryStringParameters.id) || '';
   if (!id) {

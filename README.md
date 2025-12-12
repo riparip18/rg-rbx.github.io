@@ -3,6 +3,21 @@
 - Frontend is served from `public/`.
 - API function is at `api/gamepass.js` and requires `ROBLOSECURITY` env var.
 
+## Deploy to Netlify
+
+1. Ensure `public/index.html` exists (it does).
+2. Netlify will use `netlify.toml` to route `/api/gamepass/:id` to the function.
+3. Set environment variable:
+   - Site settings → Build & Deploy → Environment → Environment variables
+   - Add `ROBLOSECURITY` with your cookie value
+4. Redeploy the site.
+
+You can test the function:
+
+```powershell
+curl https://<your-site>.netlify.app/api/gamepass/1403195100
+```
+
 ## Deploy to Vercel
 
 1. Push this repo to GitHub.
