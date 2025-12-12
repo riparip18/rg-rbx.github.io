@@ -1,11 +1,13 @@
 [build]
   publish = "."
-  command = "echo 'No build needed'"
+  command = "echo 'Static build'"
+  functions = "netlify/functions"
 
 ## Do NOT rewrite API paths to index.html
+## Map nice API path to Netlify Functions in production
 [[redirects]]
-  from = "/api/*"
-  to = "/api/:splat"
+  from = "/api/gamepass/:id"
+  to = "/.netlify/functions/gamepass?id=:id"
   status = 200
 
 [[redirects]]

@@ -228,7 +228,8 @@
             loadingDiv.style.display = 'block';
 
             try {
-                // Call backend API
+                // Call API (local dev uses Node server; prod uses Netlify Function)
+                const base = location.hostname === 'localhost' ? '' : '';
                 const response = await fetch(`/api/gamepass/${gamepassId}`);
                 
                 if (!response.ok) {
