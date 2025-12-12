@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "Roblox Regional Price Checker",
+  "version": "1.0",
+  "description": "Check Roblox gamepass regional pricing",
+  "permissions": [
+    "activeTab"
+  ],
+  "host_permissions": [
+    "https://apis.roblox.com/*"
+  ],
+  "action": {
+    "default_popup": "index.html"
+  }
+}

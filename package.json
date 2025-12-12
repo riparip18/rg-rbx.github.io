@@ -1,0 +1,13 @@
+{
+  "name": "roblox-regional-price-checker",
+  "version": "1.0.0",
+  "description": "Website untuk mengecek regional pricing Roblox gamepass",
+  "scripts": {
+    "dev": "node server.js",
+    "build": "echo 'No build needed - static HTML'",
+    "start": "node server.js"
+  },
+  "keywords": ["roblox", "regional-pricing", "checker"],
+  "author": "",
+  "license": "MIT"
+}
