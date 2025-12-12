@@ -3,9 +3,9 @@
   "builds": [
     { "src": "api/**/*.js", "use": "@vercel/node" }
   ],
-  "routes": [
-    { "src": "/api/gamepass/(.*)", "dest": "/api/gamepass.js?id=$1" },
-    { "src": "/(.*)", "dest": "/public/$1" }
-  ],
-  "outputDirectory": "public"
+  "rewrites": [
+    { "source": "/api/gamepass/(.*)", "destination": "/api/gamepass.js?id=$1" },
+    { "source": "/", "destination": "/public/index.html" },
+    { "source": "/(.*)", "destination": "/public/$1" }
+  ]
 }
